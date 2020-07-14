@@ -71,6 +71,10 @@ public final class PrimitiveInfo {
         return new PrimitiveInfo(scope.primitiveBoolean, value ? 1 : 0, 0);
     }
 
+    public static PrimitiveInfo fromChar(Scope scope, char value) {
+        return new PrimitiveInfo(scope.primitiveChar, Character.getNumericValue(value));
+    }
+
     /**
      * Parse a Java built-in object
      *
@@ -92,6 +96,8 @@ public final class PrimitiveInfo {
             return fromDouble(scope, (Double) o);
         } else if (o instanceof Boolean) {
             return fromBoolean(scope, (Boolean) o);
+        } else if (o instanceof Character) {
+            return fromChar(scope, (Character) o);
         } else {
             Log.err("unsupported object to ValueInfo" + o.getClass().toString());
             return null;
@@ -127,6 +133,11 @@ public final class PrimitiveInfo {
         return low32 == 1;
     }
 
+    public final char charValue() {
+        checkState(isChar(), "invalid type");
+        return (char)low32;
+    }
+
     public PrimitiveInfo unsafeCastTo(ClassInfo targetType) {
         checkState(targetType.isPrimitive(), "must cast to a primitive type");
         if (targetType == type.scope.primitiveChar ||
@@ -153,6 +164,8 @@ public final class PrimitiveInfo {
                 val = (int) floatValue();
             } else if (isDouble()) {
                 val = (int) doubleValue();
+            } else if (isChar()) {
+                val = charValue();
             }
             v = fromInt(type.scope, val);
         } else if (targetType == type.scope.primitiveLong) {
@@ -167,6 +180,8 @@ public final class PrimitiveInfo {
                 val = (long) floatValue();
             } else if (isDouble()) {
                 val = (long) doubleValue();
+            } else if (isChar()) {
+                val = charValue();
             }
             v = fromLong(type.scope, val);
         } else if (targetType == type.scope.primitiveFloat) {
@@ -181,6 +196,8 @@ public final class PrimitiveInfo {
                 val = (float) floatValue();
             } else if (isDouble()) {
                 val = (float) doubleValue();
+            } else if (isChar()) {
+                val = charValue();
             }
             v = fromFloat(type.scope, val);
         } else if (targetType == type.scope.primitiveDouble) {
@@ -188,13 +205,15 @@ public final class PrimitiveInfo {
             if (isLong()) {
                 val = (double) longValue();
             } else if (isInteger()) {
-                val = (double) intValue();
+                val = intValue();
             } else if (isBoolean()) {
                 val = booleanValue() ? 1 : 0;
             } else if (isFloat()) {
-                val = (double) floatValue();
+                val = floatValue();
             } else if (isDouble()) {
-                val = (double) doubleValue();
+                val = doubleValue();
+            } else if (isChar()) {
+                val = charValue();
             }
             v = fromDouble(type.scope, val);
         } else { // short, boolean, char, byte
@@ -231,6 +250,10 @@ public final class PrimitiveInfo {
         return type == type.scope.primitiveBoolean;
     }
 
+    public final boolean isChar() {
+        return type == type.scope.primitiveChar;
+    }
+
     public final boolean isZero() {
         return low32 == 0 && high32 == 0;
     }
@@ -257,6 +280,8 @@ public final class PrimitiveInfo {
             return prefix + floatValue()+"f";
         } else if (isDouble()) {
             return prefix + doubleValue();
+        } else if (isChar()) {
+            return prefix + charValue() + "";
         } else {
             Log.err("unsupported ValueInfo type " + type);
             return "";
