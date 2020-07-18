@@ -304,6 +304,28 @@ public final class ClassInfo {
         return findMethodHere(DEFAULT_CONSTRUCTOR);
     }
 
+
+    /**
+     * TODO Write it in a more elegant way.
+     * @param paramTypes
+     * @return
+     */
+    public MethodInfo getConstructor(ClassInfo[] paramTypes) {
+        for (MethodInfo methodInfo : getAllMethods()) {
+            if (!methodInfo.isConstructor()) continue;
+            int i = 0;
+            boolean found = true;
+            for (ClassInfo paramType : methodInfo.signature.partialSignature.paramTypes) {
+                if (!paramTypes[i].equals(paramType)) {
+                    found = false;
+                    break;
+                }
+            }
+            if (found) return methodInfo;
+        }
+        return null;
+    }
+
     /**
      * Find the static initializer method of the class
      * <p>
