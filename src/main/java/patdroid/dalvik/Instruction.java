@@ -24,6 +24,7 @@ import java.util.Map;
 
 import patdroid.core.ClassInfo;
 import patdroid.core.FieldInfo;
+import patdroid.core.MethodInfo;
 import patdroid.util.Pair;
 
 /**
@@ -143,11 +144,20 @@ public final class Instruction {
      * Instruction-specific data
      */
     public Object extra = null;
+    /**
+     * The method of the inst
+     */
+    public MethodInfo method = null;
+    /**
+     * The index of the inst
+     */
+    public int index;
 
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
         s.append("<");
+        s.append(index).append(" ");
         s.append(opname[opcode]);
         if (opcode_aux != OP_NOP) {
             s.append(",").append(opaux_name[opcode_aux]);
